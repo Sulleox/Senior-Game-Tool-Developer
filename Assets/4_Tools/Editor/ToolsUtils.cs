@@ -40,6 +40,16 @@ public static class ToolsUtils
         return result;
     }
 
+    public static Sprite SpriteField(string name, Sprite texture)
+    {
+        GUILayout.BeginVertical();
+        GUILayout.Label(name, TextFieldStyle(TextAnchor.UpperCenter));
+        var result = (Sprite)EditorGUILayout.ObjectField(texture, typeof(Sprite), false, GUILayout.Width(FIELD_SIDE_LENGTH), GUILayout.Height(FIELD_SIDE_LENGTH));
+        GUILayout.EndVertical();
+        return result;
+    }
+
+
     public static GameObject GameObjectField(string name, GameObject gameObject)
     {
         GUILayout.BeginVertical();

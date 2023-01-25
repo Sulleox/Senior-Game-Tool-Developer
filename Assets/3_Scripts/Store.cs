@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class StoreItem
+public class StoreItem : ScriptableObject
 {
     public int Id;
     public string Name;
@@ -16,7 +16,14 @@ public class StoreItem
 
 public class Store : Singleton<Store>
 {
-    public List<StoreItem> StoreItems;
+    public CharacterDatabase CharacterDatabase;
+    public List<CharacterEntry> StoreCharacters
+    {
+        get
+        {
+            return CharacterDatabase.m_characters;
+        }
+    }
     public Action<StoreItem> OnItemSelected;
 
     public void SelectItem(StoreItem item)

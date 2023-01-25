@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.CodeDom;
 using UnityEditor.Animations;
+using System.IO;
 
 public class StoreCharactersImporterWindows : EditorWindow
 {
@@ -14,18 +15,25 @@ public class StoreCharactersImporterWindows : EditorWindow
     }
 
     private static CharacterDatabase m_characterDB = null;
+
     public static CharacterDatabase CharacterDB
     {
         get
         {
-            m_characterDB = AssetDatabase.LoadAssetAtPath<CharacterDatabase>(CHARACTERS_DATABASE_PATH);
+            m_characterDB = AssetDatabase.LoadAssetAtPath<CharacterDatabase>(ToolsPaths.CHARACTERS_DATABASE_ASSET_PATH);
             if (m_characterDB == null)
             {
                 m_characterDB = ScriptableObject.CreateInstance<CharacterDatabase>();
-                AssetDatabase.CreateAsset(m_characterDB, CHARACTERS_DATABASE_PATH);
+                AssetDatabase.CreateAsset(m_characterDB, ToolsPaths.CHARACTERS_DATABASE_ASSET_PATH);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
             }
+
+            //Create character entries folder
+            if (!Directory.Exists(ToolsPaths.CHARACTERS_SCRIPTABLES_FOLDER_PATH))
+                Directory.CreateDirectory(ToolsPaths.CHARACTERS_SCRIPTABLES_FOLDER_PATH);
+
+            m_characterDB.CheckCharacters();
             return m_characterDB;
         }
     }
@@ -34,7 +42,7 @@ public class StoreCharactersImporterWindows : EditorWindow
     private int m_characterPrice = 100;
     private int m_characterPriority = 10;
     private GameObject m_characterMesh;
-    private Texture2D m_characterIcon;
+    private Sprite m_characterIcon;
     private Texture2D m_characterTexture;
     private Material m_characterMaterial;
     private AnimatorController m_animatorController;
@@ -42,9 +50,6 @@ public class StoreCharactersImporterWindows : EditorWindow
 
     private string m_characterMeshGUID = string.Empty;
     private GameObject m_characterPrefab = null;
-
-    private const string CHARACTER_PREFAB_PATH = "Assets\\2_Prefabs";
-    private const string CHARACTERS_DATABASE_PATH = "Assets\\5_Database\\CharacterDatabase.asset";
 
     void OnGUI () 
     {
@@ -54,7 +59,7 @@ public class StoreCharactersImporterWindows : EditorWindow
 
         GUILayout.BeginHorizontal();
 
-        m_characterIcon = ToolsUtils.TextureField("Icon", m_characterIcon);
+        m_characterIcon = ToolsUtils.SpriteField("Icon", m_characterIcon);
         m_characterTexture = ToolsUtils.TextureField("Texture", m_characterTexture);
 
         GUILayout.EndHorizontal();
@@ -86,15 +91,16 @@ public class StoreCharactersImporterWindows : EditorWindow
             m_characterIcon = CreateCharacterIcon();
         }
         string meshPath = AssetDatabase.GetAssetPath(m_characterMesh);
-        string prefabPath = $"{CHARACTER_PREFAB_PATH}/{m_characterName}.prefab";
+        string prefabPath = $"{ToolsPaths.CHARACTER_PREFAB_PATH}/{m_characterName}.prefab";
 
 
         GameObject characterRootGameObject = Instantiate(m_characterMesh);
         Animator characterAnimator = ToolsUtils.GetOrAddAnimator(characterRootGameObject);
+       
         characterAnimator.runtimeAnimatorController = m_animatorController;
         characterAnimator.avatar = m_characterAvatar;
         characterRootGameObject.AddComponent<CapsuleCollider>();
-
+        SetMaterialAndTexture(characterRootGameObject, m_characterMaterial, m_characterTexture);
         GameObject characterPrefab = PrefabUtility.SaveAsPrefabAsset(characterRootGameObject, prefabPath);
         DestroyImmediate(characterRootGameObject);
         return characterPrefab;
@@ -102,20 +108,15 @@ public class StoreCharactersImporterWindows : EditorWindow
 
     private void AddToCharacterDataBase()
     {
-        CharacterDB.AddCharacter(m_characterName, m_characterPrice, m_characterPrefab);
+        CharacterDB.AddCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterPriority, m_characterIcon);
     }
 
-    private Texture2D CreateCharacterIcon()
+    private Sprite CreateCharacterIcon()
     {
         //Load a scene
         //Import Prefab in the scene
         //Take camera screenshot
         return null;
-    }
-
-    private void AddCharacterToStore()
-    {
-
     }
 
     private void ChangeTextureType(Texture2D texture, TextureImporterType type)
@@ -124,5 +125,15 @@ public class StoreCharactersImporterWindows : EditorWindow
         TextureImporter importer = (TextureImporter)TextureImporter.GetAtPath(path);
         importer.textureType = type;
         importer.SaveAndReimport();
+    }
+
+    private void SetMaterialAndTexture(GameObject character, Material material, Texture2D texture)
+    {
+        SkinnedMeshRenderer meshRenderer = character.GetComponentInChildren<SkinnedMeshRenderer>();
+        meshRenderer.material = m_characterMaterial;
+        if (meshRenderer.material.mainTexture == null)
+        {
+            meshRenderer.material.mainTexture = texture;
+        }
     }
 }

@@ -8,10 +8,10 @@ public class StoreUI : MonoBehaviour
     UIStoreItem itemUIPrefab;
     void Start()
     {
-        foreach (StoreItem item in Store.Instance.StoreItems)
+        foreach (CharacterEntry character in Store.Instance.StoreCharacters)
         {
             UIStoreItem listItem = Instantiate(itemUIPrefab, transform);
-            listItem.Initialize(item);
+            listItem.Initialize(character);
         }
     }
 }
