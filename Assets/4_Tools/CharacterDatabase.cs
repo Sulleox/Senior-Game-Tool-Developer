@@ -8,6 +8,16 @@ using UnityEngine;
 public class CharacterDatabase : ScriptableObject
 {
     public List<CharacterEntry> m_characters = new List<CharacterEntry>();
+    private HashSet<int> m_Ids = new HashSet<int>();
+
+    public void Init()
+    {
+        CheckCharacters();
+        foreach(CharacterEntry entry in m_characters)
+        {
+            m_Ids.Add(entry.Id);
+        }
+    }
 
     public void CheckCharacters()
     {
@@ -42,6 +52,12 @@ public class CharacterDatabase : ScriptableObject
         newCharacter.Prefab = prefab;
         newCharacter.Icon = icon;
         newCharacter.ShopPriority = priority;
+        int randomId = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        while (m_Ids.Contains(randomId))
+        {
+            randomId = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        }
+        newCharacter.Id = randomId;
 
         int iterator = 1;
         string tempCharacterName = characterName;

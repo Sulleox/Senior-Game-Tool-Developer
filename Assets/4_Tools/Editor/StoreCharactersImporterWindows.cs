@@ -9,6 +9,7 @@ using System.IO;
 public class StoreCharactersImporterWindows : EditorWindow
 {
     [MenuItem("Tools/Store Characters Importer")]
+    [MenuItem("Assets/New Store Character")]
     public static void  ShowWindow () 
     {
         EditorWindow.GetWindow(typeof(StoreCharactersImporterWindows));
@@ -94,15 +95,15 @@ public class StoreCharactersImporterWindows : EditorWindow
         string prefabPath = $"{ToolsPaths.CHARACTER_PREFAB_PATH}/{m_characterName}.prefab";
 
 
-        GameObject characterRootGameObject = Instantiate(m_characterMesh);
-        Animator characterAnimator = ToolsUtils.GetOrAddAnimator(characterRootGameObject);
+        GameObject characterGameObject = Instantiate(m_characterMesh);
+        Animator characterAnimator = ToolsUtils.GetOrAddAnimator(characterGameObject);
        
         characterAnimator.runtimeAnimatorController = m_animatorController;
         characterAnimator.avatar = m_characterAvatar;
-        characterRootGameObject.AddComponent<CapsuleCollider>();
-        SetMaterialAndTexture(characterRootGameObject, m_characterMaterial, m_characterTexture);
-        GameObject characterPrefab = PrefabUtility.SaveAsPrefabAsset(characterRootGameObject, prefabPath);
-        DestroyImmediate(characterRootGameObject);
+        characterGameObject.AddComponent<CapsuleCollider>();
+        SetMaterialAndTexture(characterGameObject, m_characterMaterial, m_characterTexture);
+        GameObject characterPrefab = PrefabUtility.SaveAsPrefabAsset(characterGameObject, prefabPath);
+        DestroyImmediate(characterGameObject);
         return characterPrefab;
     }
 
