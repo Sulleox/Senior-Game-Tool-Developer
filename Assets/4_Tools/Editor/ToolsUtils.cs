@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Animations;
+using System.IO;
 
 public static class ToolsUtils
 {
@@ -87,5 +88,26 @@ public static class ToolsUtils
         Animator animator = gameObject.GetComponent<Animator>();
         return animator ? animator : gameObject.AddComponent<Animator>();
     }
-      
+
+    public static CharacterDatabase m_characterDB = null;
+    public static CharacterDatabase CharacterDB
+    {
+        get
+        {
+            m_characterDB = AssetDatabase.LoadAssetAtPath<CharacterDatabase>(ToolsPaths.CHARACTERS_DATABASE_ASSET_PATH);
+            if (m_characterDB == null)
+            {
+                m_characterDB = ScriptableObject.CreateInstance<CharacterDatabase>();
+                AssetDatabase.CreateAsset(m_characterDB, ToolsPaths.CHARACTERS_DATABASE_ASSET_PATH);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
+
+            //Create character entries folder
+            if (!Directory.Exists(ToolsPaths.CHARACTERS_SCRIPTABLES_FOLDER_PATH))
+                Directory.CreateDirectory(ToolsPaths.CHARACTERS_SCRIPTABLES_FOLDER_PATH);
+
+            return m_characterDB;
+        }
+    }
 }

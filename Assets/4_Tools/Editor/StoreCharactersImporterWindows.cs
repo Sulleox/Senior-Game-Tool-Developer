@@ -10,32 +10,10 @@ public class StoreCharactersImporterWindows : EditorWindow
     public static void  ShowWindow () 
     {
         EditorWindow.GetWindow(typeof(StoreCharactersImporterWindows));
-        CharacterDB.Init();
+        ToolsUtils.CharacterDB.Init();
     }
 
     private const int OPTIMIZE_TEXTURE_SIZE = 512;
-
-    private static CharacterDatabase m_characterDB = null;
-    public static CharacterDatabase CharacterDB
-    {
-        get
-        {
-            m_characterDB = AssetDatabase.LoadAssetAtPath<CharacterDatabase>(ToolsPaths.CHARACTERS_DATABASE_ASSET_PATH);
-            if (m_characterDB == null)
-            {
-                m_characterDB = ScriptableObject.CreateInstance<CharacterDatabase>();
-                AssetDatabase.CreateAsset(m_characterDB, ToolsPaths.CHARACTERS_DATABASE_ASSET_PATH);
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
-            }
-
-            //Create character entries folder
-            if (!Directory.Exists(ToolsPaths.CHARACTERS_SCRIPTABLES_FOLDER_PATH))
-                Directory.CreateDirectory(ToolsPaths.CHARACTERS_SCRIPTABLES_FOLDER_PATH);
-
-            return m_characterDB;
-        }
-    }
 
     private string m_characterName = "Name";
     private int m_characterPrice = 100;
@@ -103,7 +81,7 @@ public class StoreCharactersImporterWindows : EditorWindow
                     ChangeTextureType();
 
                 m_characterPrefab = GenerateCharacterPrefab();
-                CharacterDB.AddCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterShopOrder, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
+                ToolsUtils.CharacterDB.AddCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterShopOrder, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
             }
 
             if (GUILayout.Button("Load Character"))
@@ -120,7 +98,7 @@ public class StoreCharactersImporterWindows : EditorWindow
         {
             if (GUILayout.Button("Update Existing"))
             {
-                CharacterDB.UpdateCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterShopOrder, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
+                ToolsUtils.CharacterDB.UpdateCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterShopOrder, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
                 SetMaterialAndTexture(m_characterPrefab);
             }
 
@@ -136,7 +114,7 @@ public class StoreCharactersImporterWindows : EditorWindow
         {
             if (EditorUtility.DisplayDialog("Confirmation Dialog", "Are you sure that you want to delete the whole character database ?", "Yes", "No"))
             {
-                CharacterDB.CheckCharacters();
+                ToolsUtils.CharacterDB.CheckCharacters();
             }
         }
     }

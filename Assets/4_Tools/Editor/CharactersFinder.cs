@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -13,13 +14,10 @@ public class CharactersFinder : EditorWindow
     public static void ShowWindow()
     {
         EditorWindow.GetWindow(typeof(CharactersFinder));
-        m_characterDB = AssetDatabase.LoadAssetAtPath<CharacterDatabase>(ToolsPaths.CHARACTERS_DATABASE_ASSET_PATH);
     }
 
-    private static CharacterDatabase m_characterDB = null;
-
-    private GameObject[] m_possibleCharacters;
-    private List<string> m_possibleCharactersNames;
+    private List<GameObject> m_possibleCharacters = new List<GameObject>();
+    private List<string> m_possibleCharactersNames = new List<string>();
     private int m_selectedIndex;
 
     void OnGUI()
@@ -28,7 +26,7 @@ public class CharactersFinder : EditorWindow
         {
             m_possibleCharacters = SearchForPossibleCharacterPrefabs();
             m_possibleCharactersNames.Clear();
-            if (m_possibleCharacters.Length > 0)
+            if (m_possibleCharacters.Count > 0)
             {
                 foreach(GameObject gameObject in m_possibleCharacters)
                 {
@@ -37,13 +35,18 @@ public class CharactersFinder : EditorWindow
             }
         }
 
-        if (m_possibleCharacters.Length > 0)
+        if (m_possibleCharacters.Count > 0)
         {
             m_selectedIndex = EditorGUILayout.Popup(m_selectedIndex, m_possibleCharactersNames.ToArray());
+            if (GUILayout.Button("Open in Character Importer"))
+            {
+
+            }
         }
+
     }
 
-    public GameObject[] SearchForPossibleCharacterPrefabs()
+    public List<GameObject> SearchForPossibleCharacterPrefabs()
     {
         string[] assets = AssetDatabase.GetAllAssetPaths();
         List<GameObject> result = new List<GameObject>();
@@ -59,17 +62,13 @@ public class CharactersFinder : EditorWindow
             }
         }
         Debug.Log($"Found {result.Count} possible characters");
-        return result.ToArray();
+        return result;
     }
 
     private bool IsAPossibleNewCharacter(GameObject prefab)
     {
         bool hasSkinnedMeshRenderer = prefab.GetComponentInChildren<SkinnedMeshRenderer>() != null;
-        bool isInDataBase = false;
-        if (m_characterDB != null)
-        {
-            isInDataBase = m_characterDB.GetCharacter(prefab) != null;
-        }
+        bool isInDataBase = ToolsUtils.CharacterDB.GetCharacter(prefab) != null;
         return hasSkinnedMeshRenderer && !isInDataBase;
     }
 }

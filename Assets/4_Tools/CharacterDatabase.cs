@@ -36,7 +36,7 @@ public class CharacterDatabase : ScriptableObject
 
     public CharacterEntry GetCharacter(GameObject prefab)
     {
-        return m_characters.Find(x => x.Prefab == prefab);
+        return m_characters.Find(x => AssetDatabase.GetAssetPath(x.Prefab) == AssetDatabase.GetAssetPath(prefab));
     }
 
     public void UpdateCharacter(string characterName, int price, GameObject prefab, int order, Sprite icon, Material material, Avatar avatar, UnityEditor.Animations.AnimatorController controller)
