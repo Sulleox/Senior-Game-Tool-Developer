@@ -1,15 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using System.CodeDom;
 using UnityEditor.Animations;
 using System.IO;
 
 public class StoreCharactersImporterWindows : EditorWindow
 {
-    [MenuItem("Tools/Store Characters Importer")]
-    [MenuItem("Assets/New Store Character")]
+    [MenuItem("Tools/Character Assembler")]
+    [MenuItem("Assets/Open Character Assembler")]
     public static void  ShowWindow () 
     {
         EditorWindow.GetWindow(typeof(StoreCharactersImporterWindows));
@@ -42,40 +39,56 @@ public class StoreCharactersImporterWindows : EditorWindow
 
     private string m_characterName = "Name";
     private int m_characterPrice = 100;
-    private int m_characterPriority = 10;
+    private int m_characterShopOrder = 10;
     private GameObject m_characterMesh;
     private Sprite m_characterIcon;
-    private bool m_optimizeTexture = false;
     private Texture2D m_characterTexture;
     private Material m_characterMaterial;
     private AnimatorController m_characterAnimator;
     private Avatar m_characterAvatar;
 
-    private string m_characterMeshGUID = string.Empty;
     private GameObject m_characterPrefab = null;
     private CharacterEntry m_selectedCharacter = null;
 
+    private Editor m_meshPreview = null;
+    private Editor m_materialPreview = null;
 
     void OnGUI () 
     {
-        m_characterName = EditorGUILayout.TextField(m_characterName);
-        int.TryParse(EditorGUILayout.TextField(m_characterPrice.ToString()), out m_characterPrice);
-        int.TryParse(EditorGUILayout.TextField(m_characterPriority.ToString()), out m_characterPriority);
+        //Name && Price && Shop Order
+        m_characterName = ToolsUtils.TextField("Name :",m_characterName);
+        int.TryParse(ToolsUtils.TextField("Price :", m_characterPrice.ToString()), out m_characterPrice);
+        int.TryParse(ToolsUtils.TextField("Shop Order :", m_characterShopOrder.ToString()), out m_characterShopOrder);
 
+        //Icon
         GUILayout.BeginHorizontal();
         m_characterIcon = ToolsUtils.SpriteField("Icon", m_characterIcon);
+
+        //Textures
         GUILayout.BeginVertical();
         m_characterTexture = ToolsUtils.TextureField("Texture", m_characterTexture);
-        m_optimizeTexture = ToolsUtils.ToggleWithLabel(m_optimizeTexture, "Optimize");
         GUILayout.EndVertical();
         GUILayout.EndHorizontal();
 
+        //FBX
         GUILayout.BeginHorizontal();
+        GUILayout.BeginVertical();
         m_characterMesh = ToolsUtils.GameObjectField("FBX", m_characterMesh);
-        //Idea : Check if the material can be get from the FBX 
+        if (m_meshPreview == null)
+            m_meshPreview = Editor.CreateEditor(m_characterMesh);
+        m_meshPreview.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(ToolsUtils.FIELD_SIDE_LENGTH, ToolsUtils.FIELD_SIDE_LENGTH), GUIStyle.none);
+        GUILayout.EndVertical();
+
+        //Material
+        GUILayout.BeginVertical();
         m_characterMaterial = ToolsUtils.MaterialField("Material", m_characterMaterial);
+        if (m_materialPreview == null)
+            m_materialPreview = Editor.CreateEditor(m_characterMaterial);
+        m_materialPreview.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(ToolsUtils.FIELD_SIDE_LENGTH, ToolsUtils.FIELD_SIDE_LENGTH), GUIStyle.none);
+        GUILayout.EndVertical();
         GUILayout.EndHorizontal();
 
+        //Animator && Avatar
         GUILayout.BeginHorizontal();
         m_characterAnimator = ToolsUtils.AnimatorControllerField("Controller", m_characterAnimator);
         m_characterAvatar = ToolsUtils.AvatarField("Avatar", m_characterAvatar);
@@ -90,7 +103,7 @@ public class StoreCharactersImporterWindows : EditorWindow
                     ChangeTextureType();
 
                 m_characterPrefab = GenerateCharacterPrefab();
-                CharacterDB.AddCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterPriority, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
+                CharacterDB.AddCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterShopOrder, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
             }
 
             if (GUILayout.Button("Load Character"))
@@ -107,7 +120,8 @@ public class StoreCharactersImporterWindows : EditorWindow
         {
             if (GUILayout.Button("Update Existing"))
             {
-                CharacterDB.UpdateCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterPriority, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
+                CharacterDB.UpdateCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterShopOrder, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
+                SetMaterialAndTexture(m_characterPrefab);
             }
 
             if (GUILayout.Button("Unload Character"))
@@ -118,9 +132,9 @@ public class StoreCharactersImporterWindows : EditorWindow
         }
         GUILayout.EndHorizontal();
 
-        if (GUILayout.Button("Clear DB"))
+        if (GUILayout.Button("Clear Character DB"))
         {
-            if (ToolsUtils.ShowConfirmationDialog())
+            if (EditorUtility.DisplayDialog("Confirmation Dialog", "Are you sure that you want to delete the whole character database ?", "Yes", "No"))
             {
                 CharacterDB.CheckCharacters();
             }
@@ -131,7 +145,7 @@ public class StoreCharactersImporterWindows : EditorWindow
     {
         m_characterName = m_selectedCharacter.Name;
         m_characterPrice = m_selectedCharacter.Price;
-        m_characterPriority = m_selectedCharacter.ShopPriority;
+        m_characterShopOrder = m_selectedCharacter.ShopOrder;
         m_characterPrefab = m_selectedCharacter.Prefab;
         m_characterIcon = m_selectedCharacter.Icon;
         m_characterMaterial =  m_selectedCharacter.Material;
@@ -170,8 +184,16 @@ public class StoreCharactersImporterWindows : EditorWindow
     {
         string path = AssetDatabase.GetAssetPath(m_characterTexture);
         TextureImporter importer = (TextureImporter)TextureImporter.GetAtPath(path);
-        if (m_optimizeTexture)
+
+        if (EditorUtility.DisplayDialog("Optimize choice", 
+            "Do you want to optimize your texture ? (Set the texture size to 512px, remove MipMaps, and set Filtermode to Bilinear", 
+            "Optimize", "Go without change"))
+        {
             importer.maxTextureSize = OPTIMIZE_TEXTURE_SIZE;
+            importer.mipmapEnabled = false;
+            importer.filterMode = FilterMode.Bilinear;
+        }
+            
         importer.textureType = TextureImporterType.Sprite;
         importer.SaveAndReimport();
     }

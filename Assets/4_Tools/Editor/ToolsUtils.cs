@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Animations;
 
 public static class ToolsUtils
 {
-    private const int FIELD_SIDE_LENGTH = 100;
+    public const int FIELD_SIDE_LENGTH = 100;
 
     private static GUIStyle TextFieldStyle (TextAnchor anchor)
     {
@@ -19,7 +17,16 @@ public static class ToolsUtils
         return m_textFieldStyle;
     }
     private static GUIStyle m_textFieldStyle;
-    
+
+    public static string TextField(string label, string text)
+    {
+        GUILayout.BeginHorizontal();
+        GUILayout.Label(label, TextFieldStyle(TextAnchor.UpperLeft));
+        text = EditorGUILayout.TextField(text);
+        GUILayout.EndHorizontal();
+        return text;
+    }
+
     public static Texture2D TextureField(string name, Texture2D texture)
     {
         GUILayout.BeginVertical();
@@ -75,23 +82,10 @@ public static class ToolsUtils
         return result;
     }
 
-    public static bool ToggleWithLabel(bool currentValue, string label)
-    {
-        GUILayout.BeginHorizontal();
-        GUILayout.Label(label, TextFieldStyle(TextAnchor.UpperLeft));
-        currentValue = EditorGUILayout.Toggle(currentValue);
-        GUILayout.EndHorizontal();
-        return currentValue;
-    }
-
     public static Animator GetOrAddAnimator(GameObject gameObject)
     {
         Animator animator = gameObject.GetComponent<Animator>();
         return animator ? animator : gameObject.AddComponent<Animator>();
     }
-
-    public static bool ShowConfirmationDialog()
-    {
-        return EditorUtility.DisplayDialog("Confirmation Dialog", "Are you sure ?", "Yes", "No");
-    }
+      
 }

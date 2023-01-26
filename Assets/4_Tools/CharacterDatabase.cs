@@ -13,7 +13,7 @@ public class CharacterDatabase : ScriptableObject
     public void Init()
     {
         CheckCharacters();
-        foreach(CharacterEntry entry in m_characters)
+        foreach (CharacterEntry entry in m_characters)
         {
             m_Ids.Add(entry.Id);
         }
@@ -23,36 +23,41 @@ public class CharacterDatabase : ScriptableObject
     {
         m_characters.RemoveAll(x => x == null);
 
-        //TO DO : Add a dialog to choose what happens to the characters
+        //TO DO : Add a dialog to choose or show what happens to the characters
         m_characters.RemoveAll(x => x.Prefab == null);
     }
 
-    public void AddCharacter(string characterName, int price, GameObject prefab, int priority, Sprite icon, Material material, Avatar avatar, UnityEditor.Animations.AnimatorController controller)
+    public void AddCharacter(string characterName, int price, GameObject prefab, int order, Sprite icon, Material material, Avatar avatar, UnityEditor.Animations.AnimatorController controller)
     {
-        CharacterEntry newCharacterEntry = CreateCharacterEntry(characterName, price, prefab, priority, icon, material, avatar, controller);
+        CharacterEntry newCharacterEntry = CreateCharacterEntry(characterName, price, prefab, order, icon, material, avatar, controller);
         m_characters.Add(newCharacterEntry);
         EditorUtility.SetDirty(this);
     }
 
-    public void UpdateCharacter(string characterName, int price, GameObject prefab, int priority, Sprite icon, Material material, Avatar avatar, UnityEditor.Animations.AnimatorController controller)
+    public CharacterEntry GetCharacter(GameObject prefab)
+    {
+        return m_characters.Find(x => x.Prefab == prefab);
+    }
+
+    public void UpdateCharacter(string characterName, int price, GameObject prefab, int order, Sprite icon, Material material, Avatar avatar, UnityEditor.Animations.AnimatorController controller)
     {
         CharacterEntry character = m_characters.Find(x => x.Name == characterName);
         character.Price = price;
         character.Prefab = prefab;
         character.Icon = icon;
-        character.ShopPriority = priority;
+        character.ShopOrder = order;
         character.Material = material;
         character.Avatar = avatar;
         character.Animator = controller;
     }
 
-    public CharacterEntry CreateCharacterEntry(string characterName, int price, GameObject prefab, int priority, Sprite icon, Material material, Avatar avatar, UnityEditor.Animations.AnimatorController controller)
+    public CharacterEntry CreateCharacterEntry(string characterName, int price, GameObject prefab, int order, Sprite icon, Material material, Avatar avatar, UnityEditor.Animations.AnimatorController controller)
     {
         CharacterEntry newCharacter = ScriptableObject.CreateInstance<CharacterEntry>();
         newCharacter.Price = price;
         newCharacter.Prefab = prefab;
         newCharacter.Icon = icon;
-        newCharacter.ShopPriority = priority;
+        newCharacter.ShopOrder = order;
         newCharacter.Id = GetCharacterUniqueId();
         newCharacter.Name = GetCharacterUniqueName(characterName);
         newCharacter.Material = material;

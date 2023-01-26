@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af6a95534b318b5489009e764c8b90e8, type: 3}
-  m_Name: TexturedOptimized
+  m_Name: TexturedOptimized(1)
   m_EditorClassIdentifier: 
-  Id: -1010596346
-  Name: TexturedOptimized
+  Id: -1205723287
+  Name: TexturedOptimized(1)
   Price: 5000
   Icon: {fileID: 21300000, guid: 8c950c7829811dc48a532caad8f4fbe1, type: 3}
   Prefab: {fileID: 4742331443657187954, guid: 66fcbcfd339d6a24388631597409cfc4, type: 3}
