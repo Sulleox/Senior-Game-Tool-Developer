@@ -16,8 +16,9 @@ public class StoreCharactersImporterWindows : EditorWindow
         CharacterDB.Init();
     }
 
-    private static CharacterDatabase m_characterDB = null;
+    private const int OPTIMIZE_TEXTURE_SIZE = 512;
 
+    private static CharacterDatabase m_characterDB = null;
     public static CharacterDatabase CharacterDB
     {
         get
@@ -44,6 +45,7 @@ public class StoreCharactersImporterWindows : EditorWindow
     private int m_characterPriority = 10;
     private GameObject m_characterMesh;
     private Sprite m_characterIcon;
+    private bool m_optimizeTexture = false;
     private Texture2D m_characterTexture;
     private Material m_characterMaterial;
     private AnimatorController m_characterAnimator;
@@ -53,6 +55,7 @@ public class StoreCharactersImporterWindows : EditorWindow
     private GameObject m_characterPrefab = null;
     private CharacterEntry m_selectedCharacter = null;
 
+
     void OnGUI () 
     {
         m_characterName = EditorGUILayout.TextField(m_characterName);
@@ -61,7 +64,10 @@ public class StoreCharactersImporterWindows : EditorWindow
 
         GUILayout.BeginHorizontal();
         m_characterIcon = ToolsUtils.SpriteField("Icon", m_characterIcon);
+        GUILayout.BeginVertical();
         m_characterTexture = ToolsUtils.TextureField("Texture", m_characterTexture);
+        m_optimizeTexture = ToolsUtils.ToggleWithLabel(m_optimizeTexture, "Optimize");
+        GUILayout.EndVertical();
         GUILayout.EndHorizontal();
 
         GUILayout.BeginHorizontal();
@@ -80,7 +86,9 @@ public class StoreCharactersImporterWindows : EditorWindow
         {
             if (GUILayout.Button("Create New"))
             {
-                ChangeTextureType(m_characterTexture, TextureImporterType.Sprite);
+                if (m_characterTexture != null)
+                    ChangeTextureType();
+
                 m_characterPrefab = GenerateCharacterPrefab();
                 CharacterDB.AddCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterPriority, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
             }
@@ -98,7 +106,9 @@ public class StoreCharactersImporterWindows : EditorWindow
         else
         {
             if (GUILayout.Button("Update Existing"))
+            {
                 CharacterDB.UpdateCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterPriority, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
+            }
 
             if (GUILayout.Button("Unload Character"))
             {
@@ -109,7 +119,12 @@ public class StoreCharactersImporterWindows : EditorWindow
         GUILayout.EndHorizontal();
 
         if (GUILayout.Button("Clear DB"))
-            CharacterDB.CheckCharacters();
+        {
+            if (ToolsUtils.ShowConfirmationDialog())
+            {
+                CharacterDB.CheckCharacters();
+            }
+        }
     }
 
     private void UpdateCharacterValues()
@@ -129,9 +144,7 @@ public class StoreCharactersImporterWindows : EditorWindow
         if (m_characterIcon == null)
             m_characterIcon = CreateCharacterIcon();
 
-        string meshPath = AssetDatabase.GetAssetPath(m_characterMesh);
         string prefabPath = $"{ToolsPaths.CHARACTER_PREFAB_PATH}/{m_characterName}.prefab";
-
 
         GameObject characterGameObject = Instantiate(m_characterMesh);
         Animator characterAnimator = ToolsUtils.GetOrAddAnimator(characterGameObject);
@@ -139,7 +152,7 @@ public class StoreCharactersImporterWindows : EditorWindow
         characterAnimator.avatar = m_characterAvatar;
         AddAndFitColliderToMesh(characterGameObject);
 
-        SetMaterialAndTexture(characterGameObject, m_characterMaterial, m_characterTexture);
+        SetMaterialAndTexture(characterGameObject);
         GameObject characterPrefab = PrefabUtility.SaveAsPrefabAsset(characterGameObject, prefabPath);
         DestroyImmediate(characterGameObject);
         return characterPrefab;
@@ -153,19 +166,28 @@ public class StoreCharactersImporterWindows : EditorWindow
         return null;
     }
 
-    private void ChangeTextureType(Texture2D texture, TextureImporterType type)
+    private void ChangeTextureType()
     {
-        string path = AssetDatabase.GetAssetPath(texture);
+        string path = AssetDatabase.GetAssetPath(m_characterTexture);
         TextureImporter importer = (TextureImporter)TextureImporter.GetAtPath(path);
-        importer.textureType = type;
+        if (m_optimizeTexture)
+            importer.maxTextureSize = OPTIMIZE_TEXTURE_SIZE;
+        importer.textureType = TextureImporterType.Sprite;
         importer.SaveAndReimport();
     }
 
-    private void SetMaterialAndTexture(GameObject character, Material material, Texture2D texture)
+    private void SetMaterialAndTexture(GameObject character)
     {
         SkinnedMeshRenderer meshRenderer = character.GetComponentInChildren<SkinnedMeshRenderer>();
-        for (int i = 0; i < meshRenderer.materials.Length; i++)
-            meshRenderer.materials[i] = m_characterMaterial;
+        for (int i = 0; i < meshRenderer.sharedMaterials.Length; i++)
+        {
+            meshRenderer.sharedMaterials[i] = m_characterMaterial;
+            if (m_characterTexture != null)
+            {
+                meshRenderer.sharedMaterials[i].SetTexture("_MainTex", m_characterTexture);
+            }
+        }
+
     }
 
     private void AddAndFitColliderToMesh(GameObject character)
