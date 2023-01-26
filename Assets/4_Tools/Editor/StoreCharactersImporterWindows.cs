@@ -13,6 +13,7 @@ public class StoreCharactersImporterWindows : EditorWindow
     public static void  ShowWindow () 
     {
         EditorWindow.GetWindow(typeof(StoreCharactersImporterWindows));
+        CharacterDB.Init();
     }
 
     private static CharacterDatabase m_characterDB = null;
@@ -34,7 +35,6 @@ public class StoreCharactersImporterWindows : EditorWindow
             if (!Directory.Exists(ToolsPaths.CHARACTERS_SCRIPTABLES_FOLDER_PATH))
                 Directory.CreateDirectory(ToolsPaths.CHARACTERS_SCRIPTABLES_FOLDER_PATH);
 
-            m_characterDB.CheckCharacters();
             return m_characterDB;
         }
     }
@@ -46,11 +46,12 @@ public class StoreCharactersImporterWindows : EditorWindow
     private Sprite m_characterIcon;
     private Texture2D m_characterTexture;
     private Material m_characterMaterial;
-    private AnimatorController m_animatorController;
+    private AnimatorController m_characterAnimator;
     private Avatar m_characterAvatar;
 
     private string m_characterMeshGUID = string.Empty;
     private GameObject m_characterPrefab = null;
+    private CharacterEntry m_selectedCharacter = null;
 
     void OnGUI () 
     {
@@ -59,10 +60,8 @@ public class StoreCharactersImporterWindows : EditorWindow
         int.TryParse(EditorGUILayout.TextField(m_characterPriority.ToString()), out m_characterPriority);
 
         GUILayout.BeginHorizontal();
-
         m_characterIcon = ToolsUtils.SpriteField("Icon", m_characterIcon);
         m_characterTexture = ToolsUtils.TextureField("Texture", m_characterTexture);
-
         GUILayout.EndHorizontal();
 
         GUILayout.BeginHorizontal();
@@ -72,44 +71,78 @@ public class StoreCharactersImporterWindows : EditorWindow
         GUILayout.EndHorizontal();
 
         GUILayout.BeginHorizontal();
-        m_animatorController = ToolsUtils.AnimatorControllerField("Controller", m_animatorController);
-        //Idea : Check if the material can be get from the FBX 
+        m_characterAnimator = ToolsUtils.AnimatorControllerField("Controller", m_characterAnimator);
         m_characterAvatar = ToolsUtils.AvatarField("Avatar", m_characterAvatar);
         GUILayout.EndHorizontal();
 
-        if (GUILayout.Button("Generate"))
+        GUILayout.BeginHorizontal();
+        if (m_selectedCharacter == null)
         {
-            ChangeTextureType(m_characterTexture, TextureImporterType.Sprite);
-            m_characterPrefab = GenerateCharacterPrefab();
-            AddToCharacterDataBase();
+            if (GUILayout.Button("Create New"))
+            {
+                ChangeTextureType(m_characterTexture, TextureImporterType.Sprite);
+                m_characterPrefab = GenerateCharacterPrefab();
+                CharacterDB.AddCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterPriority, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
+            }
+
+            if (GUILayout.Button("Load Character"))
+                EditorGUIUtility.ShowObjectPicker<CharacterEntry>(null, false, "", 1);
+
+            if (Event.current.commandName == "ObjectSelectorUpdated")
+                if (EditorGUIUtility.GetObjectPickerControlID() == 1)
+                {
+                    m_selectedCharacter = (CharacterEntry) EditorGUIUtility.GetObjectPickerObject();
+                    UpdateCharacterValues();
+                }
         }
+        else
+        {
+            if (GUILayout.Button("Update Existing"))
+                CharacterDB.UpdateCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterPriority, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
+
+            if (GUILayout.Button("Unload Character"))
+            {
+                m_selectedCharacter = null;
+                m_characterName = string.Empty;
+            }
+        }
+        GUILayout.EndHorizontal();
+
+        if (GUILayout.Button("Clear DB"))
+            CharacterDB.CheckCharacters();
+    }
+
+    private void UpdateCharacterValues()
+    {
+        m_characterName = m_selectedCharacter.Name;
+        m_characterPrice = m_selectedCharacter.Price;
+        m_characterPriority = m_selectedCharacter.ShopPriority;
+        m_characterPrefab = m_selectedCharacter.Prefab;
+        m_characterIcon = m_selectedCharacter.Icon;
+        m_characterMaterial =  m_selectedCharacter.Material;
+        m_characterAvatar = m_selectedCharacter.Avatar;
+        m_characterAnimator = m_selectedCharacter.Animator;
     }
 
     private GameObject GenerateCharacterPrefab()
     {
         if (m_characterIcon == null)
-        {
             m_characterIcon = CreateCharacterIcon();
-        }
+
         string meshPath = AssetDatabase.GetAssetPath(m_characterMesh);
         string prefabPath = $"{ToolsPaths.CHARACTER_PREFAB_PATH}/{m_characterName}.prefab";
 
 
         GameObject characterGameObject = Instantiate(m_characterMesh);
         Animator characterAnimator = ToolsUtils.GetOrAddAnimator(characterGameObject);
-       
-        characterAnimator.runtimeAnimatorController = m_animatorController;
+        characterAnimator.runtimeAnimatorController = m_characterAnimator;
         characterAnimator.avatar = m_characterAvatar;
-        characterGameObject.AddComponent<CapsuleCollider>();
+        AddAndFitColliderToMesh(characterGameObject);
+
         SetMaterialAndTexture(characterGameObject, m_characterMaterial, m_characterTexture);
         GameObject characterPrefab = PrefabUtility.SaveAsPrefabAsset(characterGameObject, prefabPath);
         DestroyImmediate(characterGameObject);
         return characterPrefab;
-    }
-
-    private void AddToCharacterDataBase()
-    {
-        CharacterDB.AddCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterPriority, m_characterIcon);
     }
 
     private Sprite CreateCharacterIcon()
@@ -131,10 +164,17 @@ public class StoreCharactersImporterWindows : EditorWindow
     private void SetMaterialAndTexture(GameObject character, Material material, Texture2D texture)
     {
         SkinnedMeshRenderer meshRenderer = character.GetComponentInChildren<SkinnedMeshRenderer>();
-        meshRenderer.material = m_characterMaterial;
-        if (meshRenderer.material.mainTexture == null)
-        {
-            meshRenderer.material.mainTexture = texture;
-        }
+        for (int i = 0; i < meshRenderer.materials.Length; i++)
+            meshRenderer.materials[i] = m_characterMaterial;
+    }
+
+    private void AddAndFitColliderToMesh(GameObject character)
+    {
+        CapsuleCollider collider = character.AddComponent<CapsuleCollider>();
+        SkinnedMeshRenderer meshRenderer = character.GetComponentInChildren<SkinnedMeshRenderer>();
+
+        collider.center = meshRenderer.bounds.center;
+        collider.radius = meshRenderer.bounds.size.x / 2;
+        collider.height = meshRenderer.bounds.size.y;
     }
 }

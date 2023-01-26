@@ -53,7 +53,7 @@ public static class ToolsUtils
     public static GameObject GameObjectField(string name, GameObject gameObject)
     {
         GUILayout.BeginVertical();
-        GUILayout.Label(name, TextFieldStyle(TextAnchor.UpperCenter));
+        GUILayout.Label(name, TextFieldStyle(TextAnchor.UpperLeft));
         var result = (GameObject) EditorGUILayout.ObjectField(gameObject, typeof(GameObject), false);
         GUILayout.EndVertical();
         return result;

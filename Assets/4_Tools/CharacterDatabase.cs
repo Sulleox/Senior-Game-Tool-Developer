@@ -21,56 +21,69 @@ public class CharacterDatabase : ScriptableObject
 
     public void CheckCharacters()
     {
-        List<CharacterEntry> missingPrefabsCharacters = new List<CharacterEntry>();
-        foreach(CharacterEntry character in m_characters)
-        {
-            if(character == null || character.Prefab == null)
-            {
-                missingPrefabsCharacters.Add(character);
-            }
-        }
+        m_characters.RemoveAll(x => x == null);
 
-        foreach(CharacterEntry missingPrefabEntry in missingPrefabsCharacters)
-        {
-            Debug.Log($"Character {missingPrefabEntry.Name} is missing is prefab, removing it from DB");
-            m_characters.Remove(missingPrefabEntry);
-            EditorUtility.SetDirty(this);
-        }
+        //TO DO : Add a dialog to choose what happens to the characters
+        m_characters.RemoveAll(x => x.Prefab == null);
     }
 
-    public void AddCharacter(string characterName, int price, GameObject prefab, int priority, Sprite icon)
+    public void AddCharacter(string characterName, int price, GameObject prefab, int priority, Sprite icon, Material material, Avatar avatar, UnityEditor.Animations.AnimatorController controller)
     {
-        CharacterEntry newCharacterEntry = CreateCharacterEntry(characterName, price, prefab, priority, icon);
+        CharacterEntry newCharacterEntry = CreateCharacterEntry(characterName, price, prefab, priority, icon, material, avatar, controller);
         m_characters.Add(newCharacterEntry);
         EditorUtility.SetDirty(this);
     }
 
-    public CharacterEntry CreateCharacterEntry(string characterName, int price, GameObject prefab, int priority, Sprite icon)
+    public void UpdateCharacter(string characterName, int price, GameObject prefab, int priority, Sprite icon, Material material, Avatar avatar, UnityEditor.Animations.AnimatorController controller)
+    {
+        CharacterEntry character = m_characters.Find(x => x.Name == characterName);
+        character.Price = price;
+        character.Prefab = prefab;
+        character.Icon = icon;
+        character.ShopPriority = priority;
+        character.Material = material;
+        character.Avatar = avatar;
+        character.Animator = controller;
+    }
+
+    public CharacterEntry CreateCharacterEntry(string characterName, int price, GameObject prefab, int priority, Sprite icon, Material material, Avatar avatar, UnityEditor.Animations.AnimatorController controller)
     {
         CharacterEntry newCharacter = ScriptableObject.CreateInstance<CharacterEntry>();
         newCharacter.Price = price;
         newCharacter.Prefab = prefab;
         newCharacter.Icon = icon;
         newCharacter.ShopPriority = priority;
-        int randomId = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-        while (m_Ids.Contains(randomId))
-        {
-            randomId = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-        }
-        newCharacter.Id = randomId;
-
-        int iterator = 1;
-        string tempCharacterName = characterName;
-        while (m_characters.Any(x=> x.Name == tempCharacterName))
-        {
-            tempCharacterName = $"{characterName}({iterator})";
-            iterator++;
-        }
-        newCharacter.Name = tempCharacterName;
+        newCharacter.Id = GetCharacterUniqueId();
+        newCharacter.Name = GetCharacterUniqueName(characterName);
+        newCharacter.Material = material;
+        newCharacter.Avatar = avatar;
+        newCharacter.Animator = controller;
 
         AssetDatabase.CreateAsset(newCharacter, Path.Combine(ToolsPaths.CHARACTERS_SCRIPTABLES_FOLDER_PATH, $"{newCharacter.Name}.asset"));
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         return newCharacter;
+    }
+
+    private int GetCharacterUniqueId()
+    {
+        int randomId = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        while (m_Ids.Contains(randomId))
+        {
+            randomId = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        }
+        return randomId;
+    }
+
+    private string GetCharacterUniqueName(string characterName)
+    {
+        int iterator = 1;
+        string tempCharacterName = characterName;
+        while (m_characters.Any(x => x.Name == tempCharacterName))
+        {
+            tempCharacterName = $"{characterName}({iterator})";
+            iterator++;
+        }
+        return tempCharacterName;
     }
 }

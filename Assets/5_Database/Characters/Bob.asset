@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af6a95534b318b5489009e764c8b90e8, type: 3}
-  m_Name: Zombie
+  m_Name: Bob
   m_EditorClassIdentifier: 
-  Id: 1
-  Name: Zombie
-  Price: 400
-  Icon: {fileID: 21300000, guid: 8c950c7829811dc48a532caad8f4fbe1, type: 3}
-  Prefab: {fileID: 2117783482054766340, guid: 5bed6612d7e60d74898c75d41e8c44ac, type: 3}
+  Id: 665741583
+  Name: Bob
+  Price: 300
+  Icon: {fileID: 21300000, guid: afb1eb6db263c73429abcadedd4607a4, type: 3}
+  Prefab: {fileID: 2449667786701032481, guid: 7d07d1de3e513274c9eb2809b6682d55, type: 3}
   ShopPriority: 10
-  Material: {fileID: 2100000, guid: ba0f96cbb74387a4b8bac35af80b2748, type: 2}
-  Avatar: {fileID: 9000000, guid: 8c53cffd52097cf4582f0a090c9a833e, type: 3}
+  Material: {fileID: 2100000, guid: bf61ceb8837512444a2dd7299fd44ee1, type: 2}
+  Avatar: {fileID: 9000000, guid: 1351c0ec29ee84ec5beb3f67b5cfd3cd, type: 3}
   Animator: {fileID: 9100000, guid: 8b9a677f24793ba45bdc27a1dab7745e, type: 2}
