@@ -5,7 +5,7 @@ using UnityEngine;
 public class CharactersFinder : EditorWindow
 {
     [MenuItem("Tools/Store Characters Finder")]
-    [MenuItem("Assets/Open Store Characters Finder")]
+    [MenuItem("Assets/Open Characters Finder")]
     public static void ShowWindow()
     {
         EditorWindow window = EditorWindow.GetWindow(typeof(CharactersFinder));

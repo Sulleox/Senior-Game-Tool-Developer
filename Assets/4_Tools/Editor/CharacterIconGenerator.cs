@@ -92,7 +92,7 @@ public class CharacterIconGenerator : EditorWindow
         TextureImporter importer = (TextureImporter)TextureImporter.GetAtPath(savePath);
 
         if (EditorUtility.DisplayDialog("Optimize choice",
-            "Do you want to optimize your texture ? (Set the texture size to 512px, remove MipMaps, and set Filtermode to Bilinear",
+            "Do you want to optimize your icon ? (Set the texture size to 512px, remove MipMaps, and set Filtermode to Bilinear",
             "Optimize", "Go without change"))
         {
             importer.maxTextureSize = Mathf.Max(m_iconSizeX, m_iconSizeY);

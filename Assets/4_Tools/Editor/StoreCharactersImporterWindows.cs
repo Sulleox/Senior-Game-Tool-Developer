@@ -110,6 +110,7 @@ public class StoreCharactersImporterWindows : EditorWindow
 
                 m_characterPrefab = GenerateCharacterPrefab(true);
                 ToolsUtils.CharacterDB.AddCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterShopOrder, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
+                EditorUtility.DisplayDialog("Confirmation dialog", $"Character well created", "Ok");
             }
 
             if (GUILayout.Button("Load Character"))
