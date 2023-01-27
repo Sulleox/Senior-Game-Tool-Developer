@@ -37,8 +37,8 @@ public class CharacterIconGenerator : EditorWindow
 
     private void OnGUI()
     {
-        int.TryParse(ToolsUtils.TextField("Icon Size X :", m_iconSizeX.ToString()), out m_iconSizeX);
-        int.TryParse(ToolsUtils.TextField("Icon Size Y :", m_iconSizeY.ToString()), out m_iconSizeY);
+        int.TryParse(EditorGUILayout.TextField("Icon Size X :", m_iconSizeX.ToString()), out m_iconSizeX);
+        int.TryParse(EditorGUILayout.TextField("Icon Size Y :", m_iconSizeY.ToString()), out m_iconSizeY);
         m_prefab = ToolsUtils.GameObjectField("FBX", m_prefab);
         if (m_prefab != null)
         {

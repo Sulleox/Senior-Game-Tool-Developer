@@ -14,7 +14,7 @@ public class StoreCharactersImporterWindows : EditorWindow
     public static void  ShowWindow () 
     {
         EditorWindow window = EditorWindow.GetWindow(typeof(StoreCharactersImporterWindows));
-        window.minSize = new Vector2(250f, 450f);
+        window.minSize = new Vector2(300f, 450f);
         ToolsUtils.CharacterDB.Init();
     }
 
@@ -39,29 +39,9 @@ public class StoreCharactersImporterWindows : EditorWindow
     void OnGUI()
     {
         //Name && Price && Shop Order
-        m_characterName = ToolsUtils.TextField("Name :", m_characterName);
-        int.TryParse(ToolsUtils.TextField("Price :", m_characterPrice.ToString()), out m_characterPrice);
-        int.TryParse(ToolsUtils.TextField("Shop Order :", m_characterShopOrder.ToString()), out m_characterShopOrder);
-
-        //Icon
-        GUILayout.BeginHorizontal();
-        GUILayout.BeginVertical();
-        m_characterIcon = ToolsUtils.SpriteField("Icon", m_characterIcon);
-        if (m_characterPrefab != null || m_characterMesh != null)
-        {
-            if (GUILayout.Button("Generate Icon"))
-            {
-                CharacterIconGenerator iconGeneratorWindow = EditorWindow.GetWindow<CharacterIconGenerator>();
-                iconGeneratorWindow.Load(m_characterPrefab ? m_characterPrefab : GenerateCharacterPrefab(true), m_characterName, GetIconFromGenerator);
-            }
-        }
-        GUILayout.EndVertical();
-
-        //Textures
-        GUILayout.BeginVertical();
-        m_characterTexture = ToolsUtils.TextureField("Texture", m_characterTexture);
-        GUILayout.EndVertical();
-        GUILayout.EndHorizontal();
+        m_characterName = EditorGUILayout.TextField("Name :", m_characterName);
+        int.TryParse(EditorGUILayout.TextField("Price :", m_characterPrice.ToString()), out m_characterPrice);
+        int.TryParse(EditorGUILayout.TextField("Shop Order :", m_characterShopOrder.ToString()), out m_characterShopOrder);
 
         //FBX
         GUILayout.BeginHorizontal();
@@ -86,6 +66,26 @@ public class StoreCharactersImporterWindows : EditorWindow
             Editor.CreateCachedEditor(m_characterMaterial, null, ref m_materialPreview);
             m_materialPreview.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(ToolsUtils.FIELD_SIDE_LENGTH, ToolsUtils.FIELD_SIDE_LENGTH), GUIStyle.none);
         }
+        GUILayout.EndVertical();
+        GUILayout.EndHorizontal();
+
+        //Icon
+        GUILayout.BeginHorizontal();
+        GUILayout.BeginVertical();
+        m_characterIcon = ToolsUtils.SpriteField("Icon", m_characterIcon);
+        if (m_characterPrefab != null || m_characterMesh != null)
+        {
+            if (GUILayout.Button("Generate Icon"))
+            {
+                CharacterIconGenerator iconGeneratorWindow = EditorWindow.GetWindow<CharacterIconGenerator>();
+                iconGeneratorWindow.Load(m_characterPrefab ? m_characterPrefab : GenerateCharacterPrefab(true), m_characterName, GetIconFromGenerator);
+            }
+        }
+        GUILayout.EndVertical();
+
+        //Textures
+        GUILayout.BeginVertical();
+        m_characterTexture = ToolsUtils.TextureField("Texture", m_characterTexture);
         GUILayout.EndVertical();
         GUILayout.EndHorizontal();
 

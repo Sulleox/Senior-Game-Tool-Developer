@@ -19,15 +19,6 @@ public static class ToolsUtils
     }
     private static GUIStyle m_textFieldStyle;
 
-    public static string TextField(string label, string text)
-    {
-        GUILayout.BeginHorizontal();
-        GUILayout.Label(label, TextFieldStyle(TextAnchor.UpperLeft));
-        text = EditorGUILayout.TextField(text);
-        GUILayout.EndHorizontal();
-        return text;
-    }
-
     public static Texture2D TextureField(string name, Texture2D texture)
     {
         GUILayout.BeginVertical();
