@@ -39,6 +39,8 @@ public class StoreCharactersImporterWindows : EditorWindow
         int.TryParse(EditorGUILayout.TextField("Price :", m_characterPrice.ToString()), out m_characterPrice);
         int.TryParse(EditorGUILayout.TextField("Shop Order :", m_characterShopOrder.ToString()), out m_characterShopOrder);
 
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
         //FBX
         GUILayout.BeginHorizontal();
         GUILayout.BeginVertical();
@@ -65,6 +67,8 @@ public class StoreCharactersImporterWindows : EditorWindow
         GUILayout.EndVertical();
         GUILayout.EndHorizontal();
 
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
         //Icon
         GUILayout.BeginHorizontal();
         GUILayout.BeginVertical();
@@ -85,11 +89,15 @@ public class StoreCharactersImporterWindows : EditorWindow
         GUILayout.EndVertical();
         GUILayout.EndHorizontal();
 
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
         //Animator && Avatar
         GUILayout.BeginHorizontal();
         m_characterAnimator = ToolsUtils.AnimatorControllerField("Controller", m_characterAnimator);
         m_characterAvatar = ToolsUtils.AvatarField("Avatar", m_characterAvatar);
         GUILayout.EndHorizontal();
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
         GUILayout.BeginHorizontal();
         if (m_selectedCharacter == null)
