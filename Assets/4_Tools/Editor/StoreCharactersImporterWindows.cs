@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Animations;
+using System.Text.RegularExpressions;
 
 public class StoreCharactersImporterWindows : EditorWindow
 {
@@ -36,6 +37,7 @@ public class StoreCharactersImporterWindows : EditorWindow
     {
         //Name && Price && Shop Order
         m_characterName = EditorGUILayout.TextField("Name :", m_characterName);
+        m_characterName = Regex.Replace(m_characterName, @"[^a-zA-Z0-9 ]", "");
         int.TryParse(EditorGUILayout.TextField("Price :", m_characterPrice.ToString()), out m_characterPrice);
         int.TryParse(EditorGUILayout.TextField("Shop Order :", m_characterShopOrder.ToString()), out m_characterShopOrder);
 
