@@ -1,11 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Animations;
-using System.IO;
-using UnityEngine.SceneManagement;
-using UnityEditor.SceneManagement;
-using System.Text.RegularExpressions;
-using UnityEditor.PackageManager.UI;
 
 public class StoreCharactersImporterWindows : EditorWindow
 {

@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor.SceneManagement;
 using UnityEditor;
 using UnityEngine;
 using System.IO;
 using System;
-using UnityEngine.SceneManagement;
 
 public class CharacterIconGenerator : EditorWindow
 {
