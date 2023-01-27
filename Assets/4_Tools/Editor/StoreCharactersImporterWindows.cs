@@ -91,6 +91,7 @@ public class StoreCharactersImporterWindows : EditorWindow
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
+
         //Animator && Avatar
         GUILayout.BeginHorizontal();
         m_characterAnimator = ToolsUtils.AnimatorControllerField("Controller", m_characterAnimator);
@@ -209,14 +210,16 @@ public class StoreCharactersImporterWindows : EditorWindow
     private void SetMaterialAndTexture(GameObject character)
     {
         SkinnedMeshRenderer meshRenderer = character.GetComponentInChildren<SkinnedMeshRenderer>();
+        Material[] characterSharedMaterials = meshRenderer.sharedMaterials;
         for (int i = 0; i < meshRenderer.sharedMaterials.Length; i++)
         {
-            meshRenderer.sharedMaterials[i] = m_characterMaterial;
+            characterSharedMaterials[i] = m_characterMaterial;
             if (m_characterTexture != null)
             {
-                meshRenderer.sharedMaterials[i].SetTexture("_MainTex", m_characterTexture);
+                characterSharedMaterials[i].SetTexture("_MainTex", m_characterTexture);
             }
         }
+        meshRenderer.sharedMaterials = characterSharedMaterials;
     }
 
     private void AddAndFitColliderToMesh(GameObject character)
