@@ -111,8 +111,15 @@ public class StoreCharactersImporterWindows : EditorWindow
                     ChangeTextureType();
 
                 m_characterPrefab = GenerateCharacterPrefab();
-                ToolsUtils.CharacterDB.AddCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterShopOrder, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
-                EditorUtility.DisplayDialog("Confirmation dialog", $"Character well created", "Ok");
+                if (m_characterPrefab != null)
+                {
+                    ToolsUtils.CharacterDB.AddCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterShopOrder, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
+                    EditorUtility.DisplayDialog("Confirmation dialog", $"Character well created", "Ok");
+                }
+                else
+                {
+                    EditorUtility.DisplayDialog("Confirmation dialog", $"Could create character missing essential fields", "Ok");
+                }
             }
 
             if (GUILayout.Button("Load Character"))
@@ -164,6 +171,9 @@ public class StoreCharactersImporterWindows : EditorWindow
 
     private GameObject GenerateCharacterPrefab(bool withoutIcon = false)
     {
+        if (m_characterMesh == null || string.IsNullOrEmpty(m_characterName))
+            return null;
+
         string prefabPath = $"{ToolsPaths.CHARACTER_PREFAB_PATH}/{m_characterName}.prefab";
 
         GameObject characterGameObject = Instantiate(m_characterMesh);
