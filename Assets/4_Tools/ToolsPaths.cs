@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public static class ToolsPaths 
 {
     public const string CHARACTERS_ICONS_FOLDER_PATH = "Assets\\1_Graphics\\Store";

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-
 public class CharactersFinder : EditorWindow
 {
     [MenuItem("Tools/Store Characters Finder")]
