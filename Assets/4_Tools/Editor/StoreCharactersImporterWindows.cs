@@ -15,6 +15,7 @@ public class StoreCharactersImporterWindows : EditorWindow
     {
         EditorWindow window = EditorWindow.GetWindow(typeof(StoreCharactersImporterWindows));
         window.minSize = new Vector2(300f, 450f);
+        window.title = "Character Importer";
         ToolsUtils.CharacterDB.Init();
     }
 

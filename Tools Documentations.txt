@@ -1,0 +1,36 @@
+== Where to find the tools ==
+
+You can fin the CharacterImporter/CharacterFinder/IconGenerator either in Tools menu (top bar in Unity) or by right clicking in project window. 
+
+_______________________________________________________________
+== Character Importer ==
+
++ To make a good character you need at least to fill the name, price, fbx, material, controller, and avatar field. 
++ Icons can be generated automatically if you don't have any when filling the FBX field or when creating the character without icons
++ Textures can be automatically optimize for mobile game when creating the character
++ After generation, character will be stored in a character database, you can load and edit character from the database directly from the CharacterImporter window by using the Load Character button
++ You can clear the database from all character (it won't delete the prefabs and characters, it will just remove them from the database) 
++ You can edit the database directly from the scriptable object called CharacterDabase in 5_Database folder
++ Database will automatically remove the characters entries with missing prefabs or that are null when opening the Character Importer.
+
+_______________________________________________________________
+== Character Finder ==
+
++ Scan the project
++ Select a possible character in the drop down list
++ Click on open in character importer 
+
+_______________________________________________________________
+== Character Icon Generator ==
+
++ You can either open it from the "Generate Icon" button in CharacterImporter (Only if you already filled the FBX field) window or just by itself to generate character icons
++ If you opened it from the character importer, the icon generator will be loaded with the character window infos. Otherwise it will be empty from prefab
++ You can edit the prefab, and the texture size to fit your needs
++ When generating the icon, you will be asked to optimize your icons for mobile devices (removing mip maps, setting max texture size, set filter mode to bilinear) 
+
+_______________________________________________________________
+== Could be improved == 
+
++ For now we are able to just set one material for all the character in the character importer
++ Character scriptable aren't delete when removed from database
++ Would be nice to be able to repair missing prefab in character database

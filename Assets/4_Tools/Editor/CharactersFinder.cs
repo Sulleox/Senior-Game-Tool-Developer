@@ -22,6 +22,8 @@ public class CharactersFinder : EditorWindow
     private List<string> m_possibleCharactersNames = new List<string>();
     private int m_selectedIndex;
 
+    private Editor m_meshPreview = null;
+
     void OnGUI()
     {
         if (GUILayout.Button("Scan project"))
@@ -40,6 +42,10 @@ public class CharactersFinder : EditorWindow
         if (m_possibleCharacters.Count > 0)
         {
             m_selectedIndex = EditorGUILayout.Popup(m_selectedIndex, m_possibleCharactersNames.ToArray());
+
+            Editor.CreateCachedEditor(m_possibleCharacters[m_selectedIndex], null, ref m_meshPreview);
+            m_meshPreview.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(ToolsUtils.FIELD_SIDE_LENGTH, ToolsUtils.FIELD_SIDE_LENGTH), GUIStyle.none);
+
             if (GUILayout.Button("Open in Character Importer"))
             {
                 StoreCharactersImporterWindows storeCharactersImporter = GetWindow<StoreCharactersImporterWindows>();
