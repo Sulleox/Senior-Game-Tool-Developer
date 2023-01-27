@@ -209,7 +209,6 @@ public class StoreCharactersImporterWindows : EditorWindow
                 meshRenderer.sharedMaterials[i].SetTexture("_MainTex", m_characterTexture);
             }
         }
-
     }
 
     private void AddAndFitColliderToMesh(GameObject character)
