@@ -18,7 +18,7 @@ public class CharacterIconGenerator : EditorWindow
     private Editor m_meshPreview = null;
 
     private string m_iconName;
-    private Action<Sprite> m_onIconGenerated;
+    private Action<string> m_onIconGenerated;
 
     [MenuItem("Tools/Icon Generator")]
     [MenuItem("Assets/Open Icon Generator")]
@@ -28,7 +28,7 @@ public class CharacterIconGenerator : EditorWindow
         window.minSize = new Vector2(250f, 450f);
     }
 
-    public void Load(GameObject prefab, string name, Action<Sprite> result)
+    public void Load(GameObject prefab, string name, Action<string> result)
     {
         m_prefab = prefab;
         m_iconName = name;
@@ -44,17 +44,26 @@ public class CharacterIconGenerator : EditorWindow
         {
             Editor.CreateCachedEditor(m_prefab, null, ref m_meshPreview);
             m_meshPreview.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(ToolsUtils.FIELD_SIDE_LENGTH, ToolsUtils.FIELD_SIDE_LENGTH), GUIStyle.none);
+            if (string.IsNullOrEmpty(m_iconName))
+                m_iconName = m_prefab.name;
         }
         if (GUILayout.Button("Generate Icon"))
         {
-            m_onIconGenerated?.Invoke(CreateCharacterIcon());
-            m_onIconGenerated = null;
-            EditorUtility.DisplayDialog("Confirmation dialog", $"Icon well generated here", "Ok");
+            if(m_onIconGenerated != null)
+            {
+                m_onIconGenerated?.Invoke(CreateCharacterIcon());
+                m_onIconGenerated = null;
+            }
+            else
+            {
+                CreateCharacterIcon();
+            }
+            EditorUtility.DisplayDialog("Confirmation dialog", $"Icon well generated", "Ok");
             this.Close();
         }
     }
 
-    public Sprite CreateCharacterIcon()
+    public string CreateCharacterIcon()
     {
         string previousScenePath = EditorSceneManager.GetActiveScene().path;
         EditorSceneManager.OpenScene(ICON_GENERATION_SCENE_PATH);
@@ -101,6 +110,6 @@ public class CharacterIconGenerator : EditorWindow
         DestroyImmediate(character);
 
         EditorSceneManager.OpenScene(previousScenePath);
-        return Sprite.Create(texture, rect, Vector2.zero);
+        return savePath;
     }
 }

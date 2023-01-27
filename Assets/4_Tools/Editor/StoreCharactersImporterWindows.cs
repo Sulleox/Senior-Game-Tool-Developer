@@ -179,9 +179,9 @@ public class StoreCharactersImporterWindows : EditorWindow
         return characterPrefab;
     }
 
-    private void GetIconFromGenerator(Sprite sprite)
+    private void GetIconFromGenerator(string iconPath)
     {
-        m_characterIcon = sprite;
+        m_characterIcon = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
     }
 
     private void ChangeTextureType()

@@ -85,7 +85,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 669866668312589252}
-  m_LocalRotation: {x: -0.6087614, y: -0.00024358724, z: 0.7933532, w: -0.00031511768}
+  m_LocalRotation: {x: -0.6087614, y: -0.00024358723, z: 0.7933532, w: -0.00031511765}
   m_LocalPosition: {x: -0.009793099, y: -0.0032242318, z: 0.003381915}
   m_LocalScale: {x: 1, y: 1, z: 0.99999994}
   m_Children:
@@ -1097,8 +1097,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5269709228252527381}
-  - component: {fileID: 7189535716022712387}
   - component: {fileID: 1352851548769899598}
+  - component: {fileID: 7189535716022712387}
   - component: {fileID: 6055291201286363312}
   m_Layer: 0
   m_Name: Name
@@ -1123,6 +1123,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &1352851548769899598
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8290415130606720083}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.2
+  m_Height: 1.1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.55, z: 0}
 --- !u!95 &7189535716022712387
 Animator:
   serializedVersion: 3
@@ -1134,28 +1148,14 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 0}
-  m_CullingMode: 1
+  m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!136 &1352851548769899598
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8290415130606720083}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.29521433
-  m_Height: 1.1024485
-  m_Direction: 1
-  m_Center: {x: -0.00000010143027, y: 0.54536957, z: -0.0044015795}
 --- !u!136 &6055291201286363312
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1215,13 +1215,13 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 3
+  m_RayTracingMode: 0
   m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ba0f96cbb74387a4b8bac35af80b2748, type: 2}
-  - {fileID: -2274090305892019849, guid: 74b8721d904ba264b97ac6f896a8615b, type: 3}
+  - {fileID: 2100000, guid: b127ad846a00e084d91f36cf308e8270, type: 2}
+  - {fileID: 2100000, guid: b127ad846a00e084d91f36cf308e8270, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1246,7 +1246,7 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: -239278828255297897, guid: 74b8721d904ba264b97ac6f896a8615b, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 461413943bab6ef40aa2a33f18380180, type: 3}
   m_Bones:
   - {fileID: 203334525122011182}
   - {fileID: 8359285641605042622}
