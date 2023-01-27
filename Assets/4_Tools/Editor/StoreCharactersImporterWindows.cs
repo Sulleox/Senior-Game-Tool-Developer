@@ -78,7 +78,7 @@ public class StoreCharactersImporterWindows : EditorWindow
             if (GUILayout.Button("Generate Icon"))
             {
                 CharacterIconGenerator iconGeneratorWindow = EditorWindow.GetWindow<CharacterIconGenerator>();
-                iconGeneratorWindow.Load(m_characterPrefab ? m_characterPrefab : GenerateCharacterPrefab(true), m_characterName, GetIconFromGenerator);
+                iconGeneratorWindow.Load(GenerateCharacterPrefab(true), m_characterName, GetIconFromGenerator);
             }
         }
         GUILayout.EndVertical();
@@ -108,7 +108,7 @@ public class StoreCharactersImporterWindows : EditorWindow
                 if (m_characterTexture != null)
                     ChangeTextureType();
 
-                m_characterPrefab = GenerateCharacterPrefab(true);
+                m_characterPrefab = GenerateCharacterPrefab();
                 ToolsUtils.CharacterDB.AddCharacter(m_characterName, m_characterPrice, m_characterPrefab, m_characterShopOrder, m_characterIcon, m_characterMaterial, m_characterAvatar, m_characterAnimator);
                 EditorUtility.DisplayDialog("Confirmation dialog", $"Character well created", "Ok");
             }
