@@ -13,9 +13,11 @@ public class CharactersFinder : EditorWindow
     [MenuItem("Assets/Open Store Characters Finder")]
     public static void ShowWindow()
     {
-        EditorWindow.GetWindow(typeof(CharactersFinder));
+        EditorWindow window = EditorWindow.GetWindow(typeof(CharactersFinder));
+        window.minSize = new Vector2(250f, 200f);
     }
 
+    //Would be better as a Dictionnary
     private List<GameObject> m_possibleCharacters = new List<GameObject>();
     private List<string> m_possibleCharactersNames = new List<string>();
     private int m_selectedIndex;
@@ -40,7 +42,9 @@ public class CharactersFinder : EditorWindow
             m_selectedIndex = EditorGUILayout.Popup(m_selectedIndex, m_possibleCharactersNames.ToArray());
             if (GUILayout.Button("Open in Character Importer"))
             {
-
+                StoreCharactersImporterWindows storeCharactersImporter = GetWindow<StoreCharactersImporterWindows>();
+                StoreCharactersImporterWindows.ShowWindow();
+                storeCharactersImporter.LoadPossibleCharacter(m_possibleCharacters[m_selectedIndex]);
             }
         }
 

@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -21,7 +22,7 @@ public class Store : Singleton<Store>
     {
         get
         {
-            return CharacterDatabase.m_characters;
+            return CharacterDatabase.m_characters.OrderBy(x => x.ShopOrder).ToList();
         }
     }
     public Action<StoreItem> OnItemSelected;

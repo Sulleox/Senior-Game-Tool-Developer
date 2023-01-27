@@ -17,7 +17,7 @@ MonoBehaviour:
   Price: 400
   Icon: {fileID: 21300000, guid: 8c950c7829811dc48a532caad8f4fbe1, type: 3}
   Prefab: {fileID: 2117783482054766340, guid: 5bed6612d7e60d74898c75d41e8c44ac, type: 3}
-  ShopPriority: 10
+  ShopOrder: 2
   Material: {fileID: 2100000, guid: ba0f96cbb74387a4b8bac35af80b2748, type: 2}
   Avatar: {fileID: 9000000, guid: 8c53cffd52097cf4582f0a090c9a833e, type: 3}
   Animator: {fileID: 9100000, guid: 8b9a677f24793ba45bdc27a1dab7745e, type: 2}
